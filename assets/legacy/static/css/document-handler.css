@@ -1,0 +1,80 @@
+/* Estilos para manejo de documentos y resultados */
+
+.lab-results-container {
+    display: grid;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.lab-test-container {
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    background-color: white;
+}
+
+.lab-test-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.lab-test-name {
+    font-weight: 600;
+    color: #1a365d;
+}
+
+.lab-test-confidence {
+    font-size: 0.875rem;
+    color: #718096;
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    background-color: #edf2f7;
+}
+
+.lab-test-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.lab-test-footer {
+    display: flex;
+    justify-content: flex-end;
+    font-size: 0.875rem;
+    color: #4a5568;
+}
+
+/* Estados de campos */
+.field-imported {
+    transition: background-color 0.3s ease;
+}
+
+.field-editable {
+    background-color: white !important;
+    border: 1px solid #4299e1;
+}
+
+.field-readonly {
+    background-color: #f7fafc;
+    border: 1px solid #e2e8f0;
+}
+
+/* Tooltips e indicadores */
+[title] {
+    position: relative;
+    cursor: help;
+}
+
+/* Animaciones */
+@keyframes highlight {
+    0% { background-color: #fff3e6; }
+    50% { background-color: #ffe6e6; }
+    100% { background-color: #fff3e6; }
+}
+
+.field-highlight {
+    animation: highlight 1s ease;
+}

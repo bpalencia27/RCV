@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Nuevo Paciente - ERC Insight Pro
+{% endblock %}
+
+{% block content %}
+<div class="main-grid">
+    <div class="form-panel">
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">Formulario de Paciente</h1>
+            <p class="text-gray-500 mt-1">Ingrese los datos para una evaluación inicial.</p>
+        </header>
+
+        <form id="patient-form" class="flex-grow flex flex-col">
+            <div class="flex-grow space-y-6 overflow-y-auto pr-4">
+                <!-- Datos Demográficos -->
+                <fieldset>
+                    <legend class="text-lg font-semibold text-gray-800 mb-3">Datos Demográficos</legend>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre Completo</label>
+                            <input type="text" id="nombre" name="nombre" class="input-field mt-1" required>
+                        </div>
+                        <div>
+                            <label for="edad" class="block text-sm font-medium text-gray-700">Edad (años)</label>
+                            <input type="number" id="edad" name="edad" class="input-field mt-1" required min="1">
+                        </div>
+                        <div>
+                            <label for="sexo" class="block text-sm font-medium text-gray-700">Sexo Biológico</label>
+                            <select id="sexo" name="sexo" class="input-field mt-1" required>
+                                <option value="m">Masculino</option>
+                                <option value="f">Femenino</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="peso" class="block text-sm font-medium text-gray-700">Peso (kg)</label>
+                            <input type="number" id="peso" name="peso" step="0.1" class="input-field mt-1" required>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- Comorbilidades -->
+                <fieldset>
+                    <legend class="text-lg font-semibold text-gray-800 mb-3">Comorbilidades</legend>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <label class="checkbox-card">
+                            <input type="checkbox" id="hta" name="hta" class="h-5 w-5 rounded">
+                            <span class="ml-3 content text-gray-700">Hipertensión Arterial (HTA)</span>
+                        </label>
+                        <label class="checkbox-card">
+                            <input type="checkbox" id="dm2" name="dm2" class="h-5 w-5 rounded">
+                            <span class="ml-3 content text-gray-700">Diabetes Mellitus 2 (DM2)</span>
+                        </label>
+                        <label class="checkbox-card">
+                            <input type="checkbox" id="ecv" name="ecv" class="h-5 w-5 rounded">
+                            <span class="ml-3 content text-gray-700">Enfermedad Cardiovascular (ECV)</span>
+                        </label>
+                    </div>
+                </fieldset>
+
+                <!-- Laboratorios Clave -->
+                <fieldset>
+                    <legend class="text-lg font-semibold text-gray-800 mb-3">Laboratorios Clave</legend>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="creatinina" class="block text-sm font-medium text-gray-700">Creatinina en Suero (mg/dL)</label>
+                            <input type="number" id="creatinina" name="creatinina" step="0.01" class="input-field mt-1" required>
+                        </div>
+                        <div>
+                            <label for="rac" class="block text-sm font-medium text-gray-700">Relación Albúmina/Creatinina (mg/g)</label>
+                            <input type="number" id="rac" name="rac" step="0.1" class="input-field mt-1" required>
+                        </div>
+                        <div>
+                            <label for="ldl" class="block text-sm font-medium text-gray-700">Colesterol LDL (mg/dL)</label>
+                            <input type="number" id="ldl" name="ldl" class="input-field mt-1">
+                        </div>
+                         <div>
+                            <label for="hba1c" class="block text-sm font-medium text-gray-700">HbA1c (%)</label>
+                            <input type="number" id="hba1c" name="hba1c" step="0.1" class="input-field mt-1">
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+
+            <div class="mt-8 pt-5 border-t border-gray-200">
+                <button type="submit" class="w-full bg-primary hover:bg-primary-light text-white font-bold py-3 px-6 rounded-lg transition-all shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-blue-300 flex items-center justify-center gap-3">
+                    <i class="fas fa-cogs"></i>
+                    Generar Informe Avanzado
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div id="report-panel" class="report-panel hidden">
+        <!-- El contenido del informe se insertará aquí -->
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/erc_insight.js') }}"></script>
+{% endblock %}

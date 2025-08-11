@@ -1,0 +1,95 @@
+<!-- Zona de carga de archivos -->
+<div class="file-upload-zone">
+    <input type="file" id="documentUpload" accept=".pdf,.txt" multiple class="hidden">
+    <label for="documentUpload" class="file-upload-label">
+        <div class="file-upload-content">
+            <svg class="file-upload-icon" viewBox="0 0 24 24">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+            </svg>
+            <span>Arrastre archivos aquí o haga clic para seleccionar</span>
+            <span class="file-upload-hint">PDF o TXT</span>
+        </div>
+    </label>
+</div>
+
+<!-- Contenedor de resultados de laboratorio -->
+<div class="lab-results-container">
+    <!-- Los resultados se agregarán dinámicamente aquí -->
+</div>
+
+<!-- Barra de progreso -->
+<div class="progress-container hidden">
+    <div class="progress-bar"></div>
+    <div class="progress-text"></div>
+</div>
+
+<!-- Template para resultados de laboratorio -->
+<template id="labTestTemplate">
+    <div class="lab-test-container" data-test-name="">
+        <div class="lab-test-header">
+            <span class="lab-test-name"></span>
+            <span class="lab-test-confidence"></span>
+        </div>
+        <div class="lab-test-body">
+            <input type="number" name="valor" step="0.01" readonly>
+            <input type="text" name="unidad" readonly>
+            <input type="date" name="fecha" readonly>
+        </div>
+        <div class="lab-test-footer">
+            <label>
+                <input type="checkbox" class="lab-editable-toggle">
+                Editar manualmente
+            </label>
+        </div>
+    </div>
+</template>
+
+<!-- Scripts -->
+<script type="module">
+    import { DocumentHandler } from './js/document-handler.js';
+
+    // Inicializar manejador de documentos
+    const documentHandler = new DocumentHandler(
+        (message) => {
+            // Mostrar progreso
+            const progressText = document.querySelector('.progress-text');
+            if (progressText) progressText.textContent = message;
+        },
+        (error) => {
+            // Mostrar error
+            alert(error);
+        }
+    );
+
+    // Configurar zona de carga
+    const uploadZone = document.querySelector('.file-upload-zone');
+    const fileInput = document.querySelector('#documentUpload');
+
+    // Manejar carga por click
+    fileInput?.addEventListener('change', (e) => {
+        const files = (e.target as HTMLInputElement).files;
+        if (files) {
+            documentHandler.processFiles(files);
+        }
+    });
+
+    // Manejar drag & drop
+    uploadZone?.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadZone.classList.add('drag-over');
+    });
+
+    uploadZone?.addEventListener('dragleave', () => {
+        uploadZone.classList.remove('drag-over');
+    });
+
+    uploadZone?.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove('drag-over');
+        
+        const files = e.dataTransfer?.files;
+        if (files) {
+            documentHandler.processFiles(files);
+        }
+    });
+</script>

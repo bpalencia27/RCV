@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="utf-8" />
+	<title>CardiaIA Legacy</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<style>
+		body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,sans-serif;margin:0;padding:1.2rem;background:#0f172a;color:#e2e8f0;}
+		header{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem;}
+		h1{font-size:1.4rem;margin:0;}
+		.panel{background:#1e293b;border:1px solid #334155;border-radius:8px;padding:1rem;margin-bottom:1rem;}
+		label{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:#94a3b8;margin-bottom:.15rem;}
+		input,select{width:100%;padding:.45rem .55rem;border:1px solid #475569;background:#0f172a;color:#e2e8f0;border-radius:4px;font-size:.85rem;}
+		table{border-collapse:collapse;width:100%;font-size:.75rem;}
+		th,td{border:1px solid #334155;padding:.4rem .5rem;text-align:left;}
+		th{background:#1e293b;font-weight:600;color:#cbd5e1;}
+		.grid{display:grid;gap:.75rem;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));}
+		footer{margin-top:2rem;font-size:.65rem;color:#64748b;}
+		.badge{display:inline-block;background:#334155;color:#e2e8f0;padding:.25rem .5rem;border-radius:4px;font-size:.65rem;margin-right:.35rem;margin-bottom:.35rem;}
+	</style>
+</head>
+<body>
+	<header>
+		<h1>CardiaIA Legacy (Mock)</h1>
+		<small>Maqueta estilizada - Reemplazar con versión oficial.</small>
+	</header>
+	<div class="panel">
+		<h2 style="margin-top:0;font-size:1rem">Datos Paciente</h2>
+		<div class="grid">
+			<div><label>ID</label><input placeholder="P-001" /></div>
+			<div><label>Sexo</label><select><option>M</option><option>F</option></select></div>
+			<div><label>Edad</label><input type="number" value="68" /></div>
+			<div><label>Peso (kg)</label><input type="number" value="70" /></div>
+			<div><label>Creatinina</label><input type="number" step="0.01" value="1.4" /></div>
+			<div><label>LDL</label><input type="number" value="150" /></div>
+			<div><label>PAS</label><input type="number" value="150" /></div>
+			<div><label>HbA1c</label><input type="number" step="0.1" value="7.1" /></div>
+		</div>
+	</div>
+	<div class="panel">
+		<h2 style="margin-top:0;font-size:1rem">Agenda (Mock)</h2>
+		<table>
+			<thead><tr><th>Examen</th><th>Próxima Fecha</th><th>Motivo</th></tr></thead>
+			<tbody>
+				<tr><td>CREATININA</td><td>2025-09-01</td><td>Seguimiento ERC</td></tr>
+				<tr><td>LDL</td><td>2025-11-15</td><td>Control lipidico</td></tr>
+				<tr><td>HbA1c</td><td>2025-10-20</td><td>Control glucémico</td></tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="panel">
+		<h2 style="margin-top:0;font-size:1rem">Riesgo</h2>
+		<div class="badge">Riesgo: Alto</div>
+		<div class="badge">ASCVD: 18%</div>
+		<div class="badge">CrCl: 52 ml/min</div>
+	</div>
+	<footer>Placeholder Legacy CardiaIA &copy; 2025 - Sustituir por contenido original.</footer>
+</body>
+</html>

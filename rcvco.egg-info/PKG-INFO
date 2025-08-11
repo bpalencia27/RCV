@@ -1,0 +1,35 @@
+Metadata-Version: 2.4
+Name: rcvco
+Version: 0.1.0
+Summary: RCV-CO Web (lógica clínica + UI Reflex)
+Author: Anon
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: pydantic<3,>=2.7
+Requires-Dist: reflex>=0.4.0
+Requires-Dist: httpx>=0.27.0
+Provides-Extra: dev
+Requires-Dist: pytest>=8.0; extra == "dev"
+Requires-Dist: black>=24.0; extra == "dev"
+Requires-Dist: ruff>=0.5.0; extra == "dev"
+
+# RCV-CO
+
+Scaffold inicial para aplicación Reflex de evaluación de riesgo cardiovascular.
+
+## Ejecutar
+
+```powershell
+pip install .[dev]
+reflex run
+pytest
+```
+
+## Estructura
+- domain: lógica clínica (labs, scoring, riesgo, TFG, reportes)
+- ingest: parsers de archivos (txt/pdf placeholder)
+- ui: página Reflex `paciente`
+- tests: casos básicos
+
+## Próximos pasos
+Ver TODOs en planificación.
