@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: rcvco-web
+    env: docker
+    plan: free
+    autoDeploy: true
+    healthCheckPath: /
+    buildCommand: docker build -t rcvco .
+    startCommand: docker run -p 8000:8000 rcvco
