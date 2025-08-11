@@ -73,13 +73,19 @@ def procesar_json(data: Dict[str, Any]) -> Dict[str, Any]:
     ascvd = ascvd_ajustado(paciente)
     crcl = crcl_cockcroft_gault(paciente, creatinina_mg_dl=pi.creatininaMgDl) if pi.creatininaMgDl else None
     programa = _programa_prioritario(pi)
-    agenda = generar_agenda_avanzada(fecha_base=pi.fechaActual, estadio=pi.estadioERC or "E1", tiene_dm=pi.tieneDM, ldl_val=pi.ldl)
+    agenda = generar_agenda_avanzada(
+        fecha_base=pi.fechaActual,
+        estadio=pi.estadioERC or "E1",
+        tiene_dm=pi.tieneDM,
+        ldl_val=pi.ldl,
+    )
+    # model_dump(mode="json") garantiza serialización ISO de fechas
     return {
         "encabezado": "RCV-CO Asistente v2.0",
         "programaPrioritario": programa,
         "riesgo": {"categoria": riesgo_cat, "puntaje": puntaje, "ascvd": ascvd},
         "funcionRenal": {"crcl": crcl, "ajusteMedicacion": bool(crcl is not None and crcl < 45)},
-        "agenda": [a.dict() for a in agenda],
+        "agenda": [a.model_dump(mode="json") for a in agenda],
     }
 
 __all__ = ["procesar_json", "PatientInput"]
