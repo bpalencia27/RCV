@@ -2,7 +2,7 @@
 from __future__ import annotations
 from datetime import date
 from typing import Any, Dict, List, Optional
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import BaseModel, Field, ValidationError, ConfigDict
 from rcvco.domain.tfg import crcl_cockcroft_gault
 from rcvco.domain.scoring import calcula_puntaje
 from rcvco.domain.risk import clasificar_riesgo_cv_4_pasos, ascvd_ajustado
@@ -34,8 +34,8 @@ class PatientInput(BaseModel):
     fechaActual: date
     fechaIngreso: Optional[date] = None
 
-    class Config:
-        allow_population_by_field_name = True
+    # Pydantic v2: reemplaza allow_population_by_field_name por populate_by_name via ConfigDict
+    model_config = ConfigDict(populate_by_name=True)
 
 
 def _build_paciente(pi: PatientInput) -> Paciente:

@@ -4,6 +4,7 @@ from __future__ import annotations
 import reflex as rx
 from rcvco.ui.pages.paciente import get_page as paciente_page
 from rcvco.ui.pages.cardiaia import get_page as cardiaia_page
+from rcvco.ui.pages.index import get_page as index_page
 from rcvco.api.endpoints import listar_pacientes, crear_paciente
 
 
@@ -22,48 +23,8 @@ def get_theme_icon(state: UIState):
     return "🌙" if state.dark else "☀"
 
 def index() -> rx.Component:
-    menu_items = [
-        ("Paciente", "/paciente"),
-        ("CardiaIA (Reflex)", "/cardiaia"),
-        ("CardiaIA HTML Legacy", "/legacy/cardiaia.html"),
-        ("API Pacientes (GET)", "/api/pacientes"),
-    ]
-    
-    return rx.box(
-        rx.vstack(
-            rx.hstack(
-                rx.heading("RCV-CO", size="8"),
-                rx.spacer(),
-                rx.button(
-                    UIState.theme_text,
-                    on_click=UIState.toggle_theme,
-                ),
-                width="100%",
-                padding="1rem",
-            ),
-            rx.text(
-                "Evaluación de Riesgo Cardiovascular y Enfermedad Renal Crónica",
-                padding="0.5rem",
-            ),
-            rx.vstack(
-                *[
-                    rx.link(
-                        text,
-                        href=href,
-                        padding="0.5rem",
-                        _hover={"text_decoration": "underline"},
-                    )
-                    for text, href in menu_items
-                ],
-                spacing="2",
-                padding="1rem",
-            ),
-            spacing="4",
-            width="100%",
-            align_items="stretch",
-        ),
-        width="100%",
-    )
+    # Reemplazado por página index avanzada (index_page)
+    return index_page()
 
 
 # Crear y configurar la aplicación

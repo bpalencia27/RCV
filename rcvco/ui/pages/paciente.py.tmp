@@ -1,0 +1,3 @@
+"""Archivo temporal neutralizado (vacío)."""
+
+__all__: list[str] = []
