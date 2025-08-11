@@ -35,5 +35,15 @@ pytest
  
  Ver `docs/ARCHITECTURE.md` para capas.
 
+### Pruebas E2E (Playwright)
+Se añadió configuración inicial (`package.json`, `playwright.config.ts`, carpeta `e2e/`).
+Pasos básicos:
+1. Node 18+ instalado.
+2. `npm install`
+3. `npx playwright install`
+4. Correr headless: `npm run e2e` / UI: `npm run e2e:ui`
+5. Ajustar selectores placeholder en specs (`upload_autofill`, `medication_dedupe`).
+6. Reporte: `npm run e2e:report` (genera html).
+
 ## Próximos pasos
 Ver TODOs en planificación.
