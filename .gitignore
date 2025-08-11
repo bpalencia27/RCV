@@ -4,3 +4,19 @@ __pycache__/
 .states
 assets/external/
 *.db
+
+# Nuevos (limpieza y derivados build)
+.venv/
+*.egg-info/
+pycache/
+.mypy_cache/
+.pytest_cache/
+.coverage
+dist/
+build/
+.DS_Store
+node_modules/
+ENV/
+env/
+.env
+
