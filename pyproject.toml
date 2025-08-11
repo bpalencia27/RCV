@@ -10,6 +10,7 @@ readme = "README.md"
 authors = [{ name = "Anon" }]
 dependencies = [
   "pydantic>=2.7,<3",
+  "pydantic-settings>=2.2.1",
   "reflex>=0.4.0",
   "httpx>=0.27.0",
   "fastapi>=0.111.0",
