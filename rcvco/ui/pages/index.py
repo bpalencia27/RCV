@@ -1,94 +1,196 @@
-"""Página index avanzada adaptada del diseño CardiaIA (versión simplificada Reflex).
+"""Página principal RCV-CO v2.0.
 
-Se replica estructura principal (panel formulario + panel informe) usando Tailwind.
-Se implementa lógica básica en estado Reflex para:
- - Cálculo IMC
- - Cálculo TFG (Cockcroft-Gault simplificada)
- - Clasificación de riesgo simple (basada en diagnósticos, TFG, edad)
- - Generación de informe usando servicio LLM existente si disponible
-
-Limitaciones iniciales (próximos pasos):
- - Gráficas (Chart.js) no implementadas todavía
- - Carga / parsing de PDF y extracción con IA se omite (reemplazable por endpoint futuro)
- - Historial local se simplifica (pendiente persistencia localStorage -> Reflex storage)
- - Metas dinámicas parciales
+Funcionalidades:
+- Datos paciente y laboratorios
+- Cálculo TFG (Cockcroft-Gault)
+- Clasificación riesgo CV (4 Pasos)
+- Metas por programa (ERC/DM/HTA)
+- Escala fragilidad Fried
+- Agenda laboratorios (X-Y días)
+- Validación dosis por TFG
+- Informe médico completo
 """
 from __future__ import annotations
+
 import reflex as rx
-from typing import List, Optional
-from rcvco.services.report_service import build_prompt
-from rcvco.ui.calculos import calc_imc, calc_tfg, calc_riesgo
-import logging, sys
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
-# Configuración básica de logging (si ya existe otra, se puede ajustar)
-if not logging.getLogger().handlers:
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s %(levelname)s %(name)s: %(message)s",
-        handlers=[logging.StreamHandler(sys.stdout)],
+from rcvco.ui.state.form_state import AppState
+from rcvco.ui.components.forms import patient_form, fragilidad_form, labs_form
+from rcvco.ui.components.risk_panel import risk_panel
+from rcvco.ui.components.meds import meds_panel, med_modal
+from rcvco.ui.components.modals import (
+    lab_modal,
+    proximos_labs_modal,
+    fragilidad_modal,
+    informe_modal,
+)
+
+TZ_BOGOTA = ZoneInfo("America/Bogota")
+
+
+def index_page() -> rx.Component:
+    """Layout con meta tags."""
+    return rx.fragment(
+        rx.script("document.documentElement.lang='es'"),
+        rx.meta(property="og:title", content="RCV-CO"),
+        rx.meta(
+            property="og:description",
+            content="Clasificación riesgo cardiovascular y recomendaciones",
+        ),
+        rx.meta(property="og:image", content="/logo.png"),
+        rx.meta(name="twitter:card", content="summary"),
+        index(),
     )
-logger = logging.getLogger("rcvco.ui")
-from rcvco.ui.theme import theme
 
+def index() -> rx.Component:
+    """Vista principal."""
+    return rx.box(
+        # Header
+        rx.hstack(
+            rx.heading("RCV-CO", size="lg"),
+            rx.spacer(),
+            rx.hstack(
+                # Light/Dark mode
+                rx.icon_button(
+                    rx.cond(
+                        AppState.dark_mode,
+                        "🌙",
+                        "☀️",
+                    ),
+                    on_click=AppState.toggle_dark_mode,
+                    aria_label="Toggle dark mode",
+                ),
+                # High contrast
+                rx.switch(
+                    "Alto contraste",
+                    is_checked=AppState.high_contrast,
+                    on_change=AppState.toggle_high_contrast,
+                ),
+                spacing="4",
+            ),
+            width="100%",
+            p="4",
+            border_bottom="1px",
+            border_color="gray.200",
+            _dark={
+                "border_color": "gray.700",
+            },
+        ),
+        # Main grid
+        rx.grid(
+            # Panel izquierdo (datos + acciones)
+            rx.box(
+                rx.vstack(
+                    # Datos básicos
+                    rx.box(
+                        rx.heading("Datos Básicos", size="md", mb="4"),
+                        patient_form(),
+                        p="6",
+                        border="1px",
+                        border_color="gray.200",
+                        rounded="xl",
+                        bg="white",
+                        _dark={
+                            "bg": "gray.800",
+                            "border_color": "gray.700",
+                        },
+                    ),
+                    # Laboratorios
+                    rx.box(
+                        rx.heading("Laboratorios", size="md", mb="4"),
+                        rx.hstack(
+                            rx.button(
+                                "Subir archivo",
+                                left_icon="📄",
+                                on_click=AppState.toggle_modal_upload,
+                            ),
+                            rx.button(
+                                "Ingreso manual",
+                                left_icon="✏️",
+                                on_click=AppState.toggle_modal_labs,
+                            ),
+                            width="100%",
+                        ),
+                        labs_form(),
+                        p="6",
+                        border="1px",
+                        border_color="gray.200",
+                        rounded="xl",
+                        bg="white",
+                        _dark={
+                            "bg": "gray.800",
+                            "border_color": "gray.700",
+                        },
+                    ),
+                    # Medicamentos
+                    rx.box(
+                        meds_panel(),
+                        p="6",
+                        border="1px",
+                        border_color="gray.200",
+                        rounded="xl",
+                        bg="white",
+                        _dark={
+                            "bg": "gray.800",
+                            "border_color": "gray.700",
+                        },
+                    ),
+                    # Acciones principales
+                    rx.hstack(
+                        rx.button(
+                            "Evaluar Fragilidad",
+                            left_icon="👥",
+                            on_click=AppState.toggle_modal_fragilidad,
+                        ),
+                        rx.button(
+                            "Ver Próximos Labs",
+                            left_icon="📅",
+                            on_click=AppState.toggle_modal_labs_proximos,
+                        ),
+                        rx.button(
+                            "Generar Informe",
+                            left_icon="📋",
+                            on_click=AppState.generar_informe,
+                            is_disabled=lambda: not (
+                                AppState.paciente_nombre
+                                and AppState.paciente_edad
+                                and AppState.paciente_sexo
+                                and AppState.tfg_cg
+                            ),
+                        ),
+                        width="100%",
+                        spacing="4",
+                    ),
+                    width="100%",
+                    spacing="6",
+                    align_items="stretch",
+                ),
+            ),
+            # Panel derecho (riesgo + metas)
+            rx.box(
+                risk_panel(),
+            ),
+            template_columns="2fr 1fr",
+            gap="6",
+            p="6",
+        ),
+        # Modales
+        med_modal(),
+        lab_modal(),
+        proximos_labs_modal(),
+        fragilidad_modal(),
+        informe_modal(),
+        width="100%",
+        min_height="100vh",
+        bg="gray.50",
+        _dark={
+            "bg": "gray.900",
+        },
+    )
 
-class IndexState(rx.State):
-    # Datos paciente
-    nombre: str = ""
-    edad: str = ""  # mantener como str para entrada
-    sexo: str = "m"  # 'm'/'f'
-    peso: str = ""   # kg
-    talla: str = ""  # cm
-    per_abd: str = ""  # perímetro abdominal
-
-    # Diagnósticos principales
-    dx_hta: bool = False
-    dx_dm: bool = False
-    dx_erc: bool = False
-
-    # Condiciones adicionales
-    ecv_establecida: bool = False
-    tabaquismo: bool = False
-    cond_socioeconomicas: bool = False
-    fragil: bool = False
-
-    # Adherencia / acceso
-    adherencia: str = "buena"
-    barreras_acceso: bool = False
-
-    # Laboratorios clave (inputs manuales simplificados)
-    creatinina: str = ""
-    creatinina_date: str = ""
-    ldl: str = ""
-    hba1c: str = ""
-    rac: str = ""  # relación alb/creat
-
-    # Dinámicos calculados
-    imc_display: str = ""
-    tfg_display: str = ""
-    riesgo_nivel: str = "INCOMPLETO"
-    riesgo_factores: List[str] = []
-
-    # Informe generado
-    generando: bool = False
-    informe_html: str = ""
-
-    # Medicamentos simples (nombre, dosis, frecuencia)
-    medicamentos: List[tuple[str, str, str]] = []
-    # Laboratorios estructurados (id, label, valor, fecha) listado tipado
-    labs_registrados: List[dict] = []  # lista simple; adaptamos foreach usando map helper
-
-    @rx.var
-    def labs_strings(self) -> List[str]:  # type: ignore[override]
-        res: List[str] = []
-        for lab in self.labs_registrados:
-            label = str(lab.get("label", ""))
-            valor = lab.get("valor", "")
-            fecha = lab.get("fecha", "") or ""
-            s = f"{label}: {valor}"
-            if fecha:
-                s += f" ({fecha})"
-            res.append(s)
-        return res
+__all__ = ["index", "index_page"]
 
     @rx.var
     def pa_control_ok(self) -> bool:  # type: ignore[override]
